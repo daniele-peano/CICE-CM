@@ -61,6 +61,9 @@ def _build_cice():
         if "ar9v" in case.get_value('ICE_GRID'):
             # trigger RASM options with ar9v grid, otherwise set CESM options
             cice_cppdefs = cice_cppdefs + " -DRASM_MODS"
+        # add the case for NEMO
+        if case.get_value("COMP_OCN") == "nemo":
+            cice_cppdefs = cice_cppdefs + " -DNEMO_IN_CCSM "
 
         # build the library
         complib = os.path.join(libroot,"libice.a")
