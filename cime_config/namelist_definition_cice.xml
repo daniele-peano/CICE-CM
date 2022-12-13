@@ -492,7 +492,7 @@
       <value hgrid="gx1v6">$DIN_LOC_ROOT/ocn/pop/gx1v6/grid/horiz_grid_20010402.ieeer8</value>
       <value hgrid="gx1v7">$DIN_LOC_ROOT/ocn/pop/gx1v7/grid/horiz_grid_20010402.ieeer8</value>
       <value hgrid="gx3v7">$DIN_LOC_ROOT/ocn/pop/gx3v7/grid/horiz_grid_20030806.ieeer8</value>
-      <value hgrid="tx0.66v1">$DIN_LOC_ROOT/ocn/mom/tx0.66v1/grid/horiz_grid_20180604.ieeer8</value>
+      <value hgrid="tx0.66v1">$DIN_LOC_ROOT/ocn/mom/tx0.66v1/grid/horiz_grid_20190315.ieeer8</value>
       <value hgrid="tx0.1v2">$DIN_LOC_ROOT/ocn/pop/tx0.1v2/grid/horiz_grid_200709.ieeer8</value>
       <value hgrid="tx0.1v3">$DIN_LOC_ROOT/ocn/pop/tx0.1v3/grid/horiz_grid_200709.ieeer8</value>
       <value hgrid="tx1v1">$DIN_LOC_ROOT/ocn/pop/tx1v1/grid/horiz_grid_20050510.ieeer8</value>
@@ -516,7 +516,7 @@
       <value>UNSET</value> 
       <value hgrid="gx1v6">$DIN_LOC_ROOT/ocn/pop/gx1v6/grid/topography_20090204.ieeei4</value>
       <value hgrid="gx1v7">$DIN_LOC_ROOT/ocn/pop/gx1v7/grid/topography_20161215.ieeei4</value>
-      <value hgrid="tx0.66v1">$DIN_LOC_ROOT/ocn/mom/tx0.66v1/grid/topography_20180604.ieeei4</value>
+      <value hgrid="tx0.66v1">$DIN_LOC_ROOT/ocn/mom/tx0.66v1/grid/topography_20190315.ieeei4</value>
       <value hgrid="gx3v7">$DIN_LOC_ROOT/ocn/pop/gx3v7/grid/topography_20100105.ieeei4</value>
       <value hgrid="tx0.1v2">$DIN_LOC_ROOT/ocn/pop/tx0.1v2/grid/topography_200709.ieeei4</value>
       <value hgrid="tx0.1v3">$DIN_LOC_ROOT/ocn/pop/tx0.1v3/grid/topography_20170718.ieeei4</value>
@@ -1219,6 +1219,54 @@
     </values>
   </entry>
 
+  <entry id="tr_fsd">
+    <type>logical</type>
+    <category>tracers</category>
+    <group>tracer_nml</group>
+    <desc>
+      Floe size distribution
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  <entry id="restart_fsd">
+    <type>logical</type>
+    <category>tracers</category>
+    <group>tracer_nml</group>
+    <desc>
+      FSD restart from file
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  <entry id="tr_snow">
+    <type>logical</type>
+    <category>tracers</category>
+    <group>tracer_nml</group>
+    <desc>
+      Snow tracers
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  <entry id="restart_snow">
+    <type>logical</type>
+    <category>tracers</category>
+    <group>tracer_nml</group>
+    <desc>
+      snow restart from file
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
   <!-- =========================== -->
   <!-- Thermo_nml parameterizations -->
   <!-- =========================== -->
@@ -1530,7 +1578,19 @@
     </values>
   </entry>
 
-  <entry id="e_ratio">
+  <entry id="e_yieldcurve">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>dynamics_nml</group>
+    <desc>
+      EVP ellipse aspect ratio
+    </desc>
+    <values>
+      <value>2.0</value>
+    </values>
+  </entry>
+
+  <entry id="e_plasticpot">
     <type>real</type>
     <category>parameterizations</category>
     <group>dynamics_nml</group>
@@ -1991,6 +2051,247 @@
   </entry>
 
   <!-- =========================== -->
+  <!-- snow_nml -->
+  <!-- =========================== -->
+
+  <entry id="snwredist">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow redistribution
+    </desc>
+    <valid_values>none</valid_values>
+    <values>
+      <value>none</value>
+    </values>
+  </entry>
+
+  <entry id="snwgrain">
+    <type>logical</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Snow grain
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  <entry id="use_smliq_pnd">
+    <type>logical</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Pond liquid
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  <entry id="rsnw_fall">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Falling snow grains
+    </desc>
+    <values>
+      <value> 100.0 </value>
+    </values>
+  </entry>
+
+  <entry id="rsnw_tmax">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Snow grains
+    </desc>
+    <values>
+      <value> 1500.0 </value>
+    </values>
+  </entry>
+
+  <entry id="rhosnew">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      New snow density
+    </desc>
+    <values>
+      <value> 100.0 </value>
+    </values>
+  </entry>
+
+  <entry id="rhosmin">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Minimum snow density
+    </desc>
+    <values>
+      <value> 100.0 </value>
+    </values>
+  </entry>
+
+  <entry id="rhosmax">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Maximum snow density
+    </desc>
+    <values>
+      <value> 450.0 </value>
+    </values>
+  </entry>
+
+  <entry id="windmin">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Minimum wind speed
+    </desc>
+    <values>
+      <value> 10.0 </value>
+    </values>
+  </entry>
+
+  <entry id="drhosdwind">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Change of snow density with wind
+    </desc>
+    <values>
+      <value> 27.3 </value>
+    </values>
+  </entry>
+
+  <entry id="snwlvlfac">
+    <type>real</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      Snow level factor
+    </desc>
+    <values>
+      <value> 0.3 </value>
+    </values>
+  </entry>
+
+  <entry id="snw_aging_table">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow aging table
+    </desc>
+    <valid_values>test</valid_values>
+    <values>
+      <value>test</value>
+    </values>
+  </entry>
+
+  <entry id="snw_filename">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <entry id="snw_rhos_fname">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <entry id="snw_Tgrd_fname">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <entry id="snw_T_fname">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <entry id="snw_tau_fname">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <entry id="snw_kappa_fname">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <entry id="snw_drdt0_fname">
+    <type>char</type>
+    <category>parameterizations</category>
+    <group>snow_nml</group>
+    <desc>
+      snow filename
+    </desc>
+    <valid_values>unknown</valid_values>
+    <values>
+      <value>unknown</value>
+    </values>
+  </entry>
+
+  <!-- =========================== -->
   <!-- forcing_nml -->
   <!-- =========================== -->
 
@@ -2050,7 +2351,9 @@
       include frazil water/salt fluxes in ocean fluxes
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
+      <value ocn_comp='pop'>.false.</value>
+      <value ocn_comp='docn'>.false.</value>
     </values>
   </entry>
 
@@ -2163,6 +2466,19 @@
     <valid_values>minus1p8,linear_salt,mushy</valid_values>
     <values>
       <value>mushy</value>
+    </values>
+  </entry>
+
+  <entry id="saltflux_option">
+    <type>char</type>
+    <category>forcing</category>
+    <group>forcing_nml</group>
+    <desc>
+      prognostic or 4 psu salinity
+    </desc>
+    <valid_values>4psu,prognostic</valid_values>
+    <values>
+      <value>4psu</value>
     </values>
   </entry>
 
@@ -2522,33 +2838,27 @@
     </values>
   </entry>
 
-  <entry id="stream_meshfile">
+  <entry id="stream_meshfile" modify_via_xml="SSTICE_MESH_FILENAME">
     <type>char</type>
     <category>streams</category>
     <group>ice_prescribed_nml</group>
     <desc>stream mesh file</desc>
     <values>
-      <value>
-        ''
-      </value>
-      <value cice_mode="prescribed">
-	$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_1x1_clim_c101029_ESMFmesh_120520.nc
-      </value>
-      <value cice_mode="prescribed" hgrid="T31">
-	$DIN_LOC_ROOT/share/meshes/T31_040122_ESMFmesh.nc
-      </value>
-      <value cice_mode="prescribed" hgrid="1.9x2.5">
-	$DIN_LOC_ROOT/share/meshes/fv1.9x2.5_141008_ESMFmesh.nc
-      </value>
-      <value cice_mode="prescribed" hgrid="0.9x1.25">
-	$DIN_LOC_ROOT/share/meshes/fv0.9x1.25_141008_polemod_ESMFmesh.nc
-      </value>
-      <value cice_mode="prescribed" hgrid="0.47x0.63">
-	$DIN_LOC_ROOT/share/meshes/fv0.47x0.63_141008_ESMFmesh.nc
-      </value>
-      <value cice_mode="prescribed" hrid="4x5">
-	$DIN_LOC_ROOT/share/meshes/fv4x5_050615_polemod_ESMFmesh.nc
-      </value>
+      <value>''</value>
+      <value cice_mode="prescribed">$SSTICE_MESH_FILENAME</value>
+    </values>
+  </entry>
+
+  <entry id="stream_datafiles" modify_via_xml="SSTICE_DATA_FILENAME">
+    <type>char</type>
+    <category>icepresc</category>
+    <group>ice_prescribed_nml</group>
+    <desc>
+      file name(s) containing sst/ifrac data
+    </desc>
+    <values>
+      <value>''</value>
+      <value cice_mode="prescribed">$SSTICE_DATA_FILENAME</value>
     </values>
   </entry>
 
@@ -2575,19 +2885,6 @@
     </desc>
     <values>
       <value>ice_cov</value>
-    </values>
-  </entry>
-
-  <entry id="stream_datafiles" modify_via_xml="SSTICE_DATA_FILENAME">
-    <type>char</type>
-    <category>icepresc</category>
-    <group>ice_prescribed_nml</group>
-    <desc>
-      file name(s) containing sst/ifrac data
-    </desc>
-    <values>
-      <value>''</value>
-      <value cice_mode="prescribed">$SSTICE_DATA_FILENAME</value>
     </values>
   </entry>
 
@@ -4455,6 +4752,171 @@
   </entry>
 
   <!-- =========================== -->
+  <!-- icefields_snow_nml -->
+  <!-- =========================== -->
+
+  <entry id="f_smassicen">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_smassliqn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_rhos_cmpn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_rhos_cntn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_rsnwn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_smassice">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_smassliq">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_rhos_cmp">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_rhos_cnt">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_rsnw">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_meltsliq">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_fsloss">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_snow_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <!-- =========================== -->
   <!-- icefields_mechred_nml -->
   <!-- =========================== -->
 
@@ -4902,6 +5364,82 @@
     <type>char</type>
     <category>history</category>
     <group>icefields_bgc_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <!-- =========================== -->
+  <!-- icefields_fsd_nml -->
+  <!-- =========================== -->
+
+  <entry id="f_afsd">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_fsd_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_dafsd_newi">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_fsd_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_dafsd_latg">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_fsd_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_dafsd_latm">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_fsd_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_dafsd_wave">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_fsd_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_dafsd_weld">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_fsd_nml</group>
     <desc>
     </desc>
     <values>

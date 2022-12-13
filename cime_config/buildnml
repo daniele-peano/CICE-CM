@@ -14,7 +14,7 @@ import os, shutil, sys, glob, filecmp, imp, re
 CIMEROOT = os.environ.get("CIMEROOT")
 if CIMEROOT is None:
     raise SystemExit("ERROR: must set CIMEROOT environment variable")
-sys.path.append(os.path.join(CIMEROOT, "scripts", "Tools"))
+sys.path.append(os.path.join(CIMEROOT, "CIME", "Tools"))
 
 from standard_script_setup import *
 from CIME.case import Case
@@ -48,6 +48,8 @@ def _create_namelists(case, confdir, infile, nmlgen):
     # Create config dictionary
     #----------------------------------------------------
     config = {}
+
+    config['ocn_comp'] = case.get_value("COMP_OCN")
 
     cice_mode = case.get_value("CICE_MODE")
     hgrid = case.get_value('ICE_GRID')
@@ -103,11 +105,6 @@ def _create_namelists(case, confdir, infile, nmlgen):
         hgrid = ice_grid
 
     #----------------------------------------------------
-    # Initialize namelist defaults
-    #----------------------------------------------------
-    nmlgen.init_defaults(infile, config)
-
-    #----------------------------------------------------
     # Set decomposition
     #----------------------------------------------------
 
@@ -117,16 +114,13 @@ def _create_namelists(case, confdir, infile, nmlgen):
     elif driver == 'nuopc':
         scol_lon = float(case.get_value('PTS_LON'))
         scol_lat = float(case.get_value('PTS_LAT'))
-        if scol_lon > -999. and scol_lat > -999. and case.get_value("ATM_DOMAIN_FILE") != "UNSET":
+        if scol_lon > -999. and scol_lat > -999.:
             single_column = True
         else:
             single_column = False
 
     if single_column:
         # explicitly set values for single column mode
-        nx = 1
-        ny = 1
-        cice_auto_decomp = False
         cice_blckx = 1
         cice_blcky = 1
         cice_mxblcks = 1
@@ -161,11 +155,32 @@ def _create_namelists(case, confdir, infile, nmlgen):
                  cice_decomptype = decompconfig[5]
              cice_decompsetting = decompconfig[6]
 
-    nmlgen.set_value('block_size_x', value=cice_blckx)
-    nmlgen.set_value('block_size_y', value=cice_blcky)
-    nmlgen.set_value('max_blocks', value=cice_mxblcks)
-    nmlgen.set_value('distribution_type', value=cice_decomptype)
-    nmlgen.set_value('processor_shape', value=cice_decompsetting)
+    #----------------------------------------------------
+    # Initialize namelist defaults
+    #----------------------------------------------------
+    nmlgen.init_defaults(infile, config)
+
+    # overwrite nx_global and ny_global if single_column
+    if single_column:
+        nmlgen.set_value("nx_global", 1)
+        nmlgen.set_value("ny_global", 1)
+
+    # For each of the following we need to assure that the user didn't set in
+    # user_nl
+    with open(infile[0], "r") as fh:
+        user_nls = _strip_comments(fh)
+        user_nl = "\n".join(usr_nl for usr_nl in user_nls)
+
+    if not "block_size_x" in user_nl:
+        nmlgen.set_value('block_size_x', value=cice_blckx)
+    if not "block_size_y" in user_nl:
+        nmlgen.set_value('block_size_y', value=cice_blcky)
+    if not "max_blocks" in user_nl:
+        nmlgen.set_value('max_blocks', value=cice_mxblcks)
+    if not "distribution_type" in user_nl:
+        nmlgen.set_value('distribution_type', value=cice_decomptype)
+    if not "processor_shape" in user_nl:
+        nmlgen.set_value('processor_shape', value=cice_decompsetting)
 
     #----------------------------------------------------
     # Set other values not obtained in the default settings
@@ -192,6 +207,7 @@ def _create_namelists(case, confdir, infile, nmlgen):
     # set initial conditions for branch of hybrid runs
     # TODO - need to implement multi-instance for these files - the following assumes single instance
     run_type = case.get_value("RUN_TYPE")
+    ice_ic = None
     if run_type == 'branch' or run_type == 'hybrid':
         run_refcase = case.get_value("RUN_REFCASE")
         run_refdate = case.get_value("RUN_REFDATE")
@@ -231,19 +247,25 @@ def _create_namelists(case, confdir, infile, nmlgen):
             'dynamics_nml',
             'shortwave_nml',
             'ponds_nml',
+            'snow_nml',
             'forcing_nml',
             'domain_nml',
             'ice_prescribed_nml',
             'zbgc_nml',
             'icefields_bgc_nml',
             'icefields_drag_nml',
+            'icefields_fsd_nml',
             'icefields_mechred_nml',
             'icefields_pond_nml',
+            'icefields_snow_nml',
             'icefields_nml']
 
     namelist_file = os.path.join(confdir, "ice_in")
     nmlgen.write_output_file(namelist_file, data_list_path, groups=groups, sorted_groups=False)
-
+    if ice_ic:
+        with open(data_list_path, "a") as fd:
+            fd.write(f"ice_ic = {ice_ic}")
+    
     logger.debug("cice: grid is %s" %(hgrid))
     logger.debug("cice: physics is %s "%phys)
 
@@ -253,7 +275,7 @@ def buildnml(case, caseroot, compname):
     """Build the cice namelist """
 
     # Build the component namelist
-    if compname != "cice6":
+    if compname != "cice":
         raise AttributeError
     comp_root_dir_ice = case.get_value("COMP_ROOT_DIR_ICE")
     srcroot = case.get_value("SRCROOT")
@@ -269,7 +291,7 @@ def buildnml(case, caseroot, compname):
     # Construct the namelist generator
     #----------------------------------------------------
     # determine directory for user modified namelist_definitions.xml and namelist_defaults.xml
-    user_xml_dir = os.path.join(caseroot, "SourceMods", "src.cice6")
+    user_xml_dir = os.path.join(caseroot, "SourceMods", "src.cice")
     expect (os.path.isdir(user_xml_dir),
             "user_xml_dir %s does not exist " %user_xml_dir)
 
@@ -308,7 +330,7 @@ def buildnml(case, caseroot, compname):
             inst_string_label = "\"\""
 
         # create namelist_infile using user_nl_file as input
-        user_nl_file = os.path.join(caseroot, "user_nl_cice6" + inst_string)
+        user_nl_file = os.path.join(caseroot, "user_nl_cice" + inst_string)
         expect(os.path.isfile(user_nl_file),
                "Missing required user_nl_file %s " %(user_nl_file))
         infile = os.path.join(confdir, "namelist_infile")
@@ -327,12 +349,20 @@ def buildnml(case, caseroot, compname):
             logger.debug("CICE namelist copy: file1 %s file2 %s " %(file1, file2))
             shutil.copy2(file1, file2)
 
+def _strip_comments(fh, token="!"):
+    ''' strip anything after token in each line of fh '''
+    for line in fh:
+        s = line.split(token, 1)[0].strip()
+        if s:
+            yield s
+
+
 ###############################################################################
 def _main_func():
 
     caseroot = parse_input(sys.argv)
     with Case(caseroot, read_only=False) as case:
-        buildnml(case, caseroot, "cice6")
+        buildnml(case, caseroot, "cice")
 
 if __name__ == "__main__":
     _main_func()
